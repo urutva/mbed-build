@@ -34,7 +34,7 @@ class ConfigLayer:
     def apply(self, config: "Config") -> "Config":
         """Apply all modifiers to the Config."""
         for modifier in self.modifiers:
-            config = modifier(config)
+            modifier(config)
         return config
 
     @classmethod

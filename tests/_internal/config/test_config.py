@@ -59,3 +59,8 @@ class TestBuildFromLayers(TestCase):
         subject = build_config_from_layers([layer_1, layer_2])
 
         self.assertEqual(subject["target"]["features"], set(["FEATURE_2"]))
+
+
+class TestBuildConfig(TestCase):
+    def test_assembles_config_from_target_data_and_additional_files(self):
+        pass

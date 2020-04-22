@@ -21,13 +21,15 @@ def build(key: str, data: Any) -> Callable:
     - key -> dict
     """
     if isinstance(data, dict):
-        value = data["value"]
+        value = data.get("value", None)
         help = data.get("help", None)
+        macro_name = data.get("macro_name")
     else:
         value = data
         help = None
+        macro_name = None
 
-    return SetConfigSetting(key=key, value=value, help=help)
+    return SetConfigSetting(key=key, value=value, macro_name=macro_name, help=help)
 
 
 @dataclass
@@ -36,6 +38,7 @@ class SetConfigSetting:
 
     key: str
     value: Any
+    macro_name: Optional[str]
     help: Optional[str]
 
     def __call__(self, config: "Config") -> None:
@@ -47,4 +50,5 @@ class SetConfigSetting:
             config["settings"][self.key] = {
                 "value": self.value,
                 "help": self.help,
+                "macro_name": self.macro_name,
             }

@@ -8,7 +8,7 @@ from typing_extensions import TypedDict
 
 from mbed_targets import get_target_by_board_type, Target
 
-from mbed_build._internal.find_files import find_files, LabelFilter
+from mbed_build._internal.find_files import find_files, filter_files, LabelFilter
 from mbed_build._internal.config.config_layer import ConfigLayer
 from mbed_build._internal.config.config_source import ConfigSource
 
@@ -32,66 +32,71 @@ class TargetOverrides(TypedDict):
 
     components: Set[str]
     device_has: Set[str]
-    extra_labels: Set[str]
+    # TODO (extra_labels vs labels)
+    labels: Set[str]
     features: Set[str]
     macros: Set[str]
 
 
-def build_config_from_layers(layers: List[ConfigLayer]) -> Config:
+def build_config_from_layers(layers: List[ConfigLayer], base_config: Optional[Config] = None) -> Config:
     """Create configuration from layers."""
-    config = _empty_config()
+    # TODO: ensure config is not mutated
+    if not base_config:
+        base_config = _empty_config()
     for layer in layers:
-        layer.apply(config)
-    return config
-
-
-def _apply_layers(config: Config, layers: List[ConfigLayer]) -> Config:
-    # TODO: don't mutate
-    for layer in layers:
-        layer.apply(config)
-    return config
+        layer.apply(base_config)
+    return base_config
 
 
 def build_config(mbed_program_directory, board_type) -> Config:
+    """Assemble build configuration.
+
+    Configuration is assembled from:
+    - targets.json file (pre-parsed in `mbed-targets`)
+    - mbed_lib.json files
+    - mbed_app.json file
+
+    All the source files which contain build configuration affect labelling filters, which are used
+    to find mbed_lib.json files. Whenever those filters change, we need to re-assemble the configuration
+    taking into account files, which might've previously been excluded.
+    An example of such behaviour would be an `mbed_lib.json` file which adds a "feature" to configuration.
+    Since "features" are one of the ingredients which determine directory filtering rules, adding one during
+    configuration assembly pass changes file filtering rules.
+    """
     target = get_target_by_board_type(board_type, mbed_program_directory)
-    base_layer = ConfigLayer.from_target_data(target)
-    initial_config = _apply_layers(_empty_config(), [base_layer])
+    config = _empty_config()
+    config["settings"] = target.config
+    config["features"] = target.features
 
     all_mbed_lib_files = find_files("mbed_lib.json", mbed_program_directory)
 
     old_filters = []
-    filters = _build_filters(initial_config)
+    filters = _build_filters(config)
 
     while old_filters != filters:
         config_specific_mbed_lib_files = filter_files(all_mbed_lib_files, filters)
-        mbed_lib_sources = [ConfigSource.from_file(file) for file in target_specific_mbed_lib_files]
-        mbed_lib_layers = [ConfigLayer.from_config_source(source, target.labels) for source in mbed_lib_sources]
+        mbed_lib_sources = [ConfigSource.from_mbed_lib(file) for file in config_specific_mbed_lib_files]
+        mbed_lib_layers = [
+            ConfigLayer.from_config_source(source, list(config["target"]["labels"])) for source in mbed_lib_sources
+        ]
 
-        config = _apply_layers(initial_config, mbed_lib_layers)
+        config = build_config_from_layers(mbed_lib_layers, config)
 
         old_filters = filters
         filters = _build_filters(config)
-
-    return config
-
-
-def _build_config_from_target(target: Target) -> Config:
-    config = _empty_config()
-    config.settings = target.settings
-    config.target["features"] = target.features
     return config
 
 
 def _build_filters(config: Config) -> List[Callable]:
     return [
-        LabelFilter("TARGET", config.labels),
-        LabelFilter("FEATURE", config.features),
-        LabelFilter("COMPONENT", config.components),
+        LabelFilter("TARGET", config["target"]["labels"]),
+        LabelFilter("FEATURE", config["target"]["features"]),
+        LabelFilter("COMPONENT", config["target"]["components"]),
     ]
 
 
 def _empty_config() -> Config:
     return Config(
         settings={},
-        target={"components": set(), "device_has": set(), "extra_labels": set(), "features": set(), "macros": set()},
+        target={"components": set(), "device_has": set(), "labels": set(), "features": set(), "macros": set()},
     )

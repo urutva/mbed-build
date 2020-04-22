@@ -3,9 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 """Find files in MbedOS program directory."""
+from dataclasses import dataclass, field
 from pathlib import Path
 import fnmatch
-from typing import Callable, Iterable, Optional, List, Tuple
+from typing import Callable, Iterable, Optional, List, Set, Tuple
 
 
 def find_files(filename: str, directory: Path) -> List[Path]:
@@ -66,6 +67,7 @@ def filter_files(files: List[Path], filters: List[Callable]) -> List[Path]:
     return [file for file in files if all(f(file) for f in filters)]
 
 
+@dataclass
 class LabelFilter:
     """Filter out given paths using path labelling rules.
 
@@ -81,20 +83,18 @@ class LabelFilter:
     - "/path/FEATURE_FOO/FEATURE_BAR/somefile.txt" will be filtered out
     """
 
-    def __init__(self, label_type: str, allowed_label_values: Iterable[str]):
-        """Initialise the filter attributes.
+    label_type: str
+    allowed_label_values: Iterable[str]
+    allowed_labels: Set[str] = field(init=False)
 
-        Args:
-            label_type: Type of the label to filter with. In filtered paths, it prefixes the value.
-            allowed_label_values: Values which are allowed for the given label type.
-        """
-        self._label_type = label_type
-        self._allowed_labels = set(f"{label_type}_{label_value}" for label_value in allowed_label_values)
+    def __post_init__(self):
+        """Calculate allowed labels."""
+        self.allowed_labels = set(f"{self.label_type}_{label_value}" for label_value in self.allowed_label_values)
 
     def __call__(self, path: Path) -> bool:
         """Return True if given path contains only allowed labels - should not be filtered out."""
-        labels = set(part for part in path.parts if self._label_type in part)
-        return labels.issubset(self._allowed_labels)
+        labels = set(part for part in path.parts if self.label_type in part)
+        return labels.issubset(self.allowed_labels)
 
 
 class MbedignoreFilter:
