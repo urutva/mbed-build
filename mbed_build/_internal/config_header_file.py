@@ -8,6 +8,8 @@ import pathlib
 import jinja2
 
 from typing import Iterable, Any
+from mbed_targets import Target
+from mbed_project import MbedProgram
 from mbed_build._internal.config.config import Config
 from mbed_build._internal.config.assemble_build_config import assemble_config
 
@@ -15,17 +17,17 @@ TEMPLATES_DIRECTORY = pathlib.Path("_internal", "templates")
 TEMPLATE_NAME = "mbed_config.tmpl"
 
 
-def generate_config_header_file(mbed_target: str, program_path: str) -> str:
+def generate_config_header_file(mbed_target: Target, program: MbedProgram) -> str:
     """Generate the program's mbed_config.h file containing the configuration definitions.
 
     Args:
         mbed_target: the target the application is being built for
-        program_path: the path to the local Mbed program
+        program: the local Mbed program
 
     Returns:
         A string of rendered contents for the file.
     """
-    config = assemble_config(mbed_target, pathlib.Path(program_path))
+    config = assemble_config(mbed_target, program)
     return _render_config_header_template(config)
 
 
