@@ -47,6 +47,7 @@ class BuildFlags:
 
 
 FLAGS_DATA_DIR = Path(__file__).parent / "data"
+PROFILES_DIR = FLAGS_DATA_DIR / "profiles"
 CORE_COMPILE_FLAGS_FILE_PATH = FLAGS_DATA_DIR / "core_compile_flags.json"
 CORE_COMPILE_DEFINITIONS_PATH = FLAGS_DATA_DIR / "core_compile_definitions.json"
 CMSIS_PACK_INDEX = FLAGS_DATA_DIR / "cmsis_pack_index.json"
