@@ -7,6 +7,9 @@ import pathlib
 
 import click
 
+from mbed_project import MbedProgram
+from mbed_targets import get_target_by_name
+
 from mbed_build._internal.config_header_file import generate_config_header_file
 from mbed_build._internal.write_files import write_file
 
@@ -41,6 +44,8 @@ def build(mbed_target: str, program_path: str, config_only: bool) -> None:
     if not config_only:
         click.echo("Full build is not yet supported.")
     else:
-        header_file_contents = generate_config_header_file(mbed_target, program_path)
+        mbed_program = MbedProgram.from_existing(pathlib.Path(program_path))
+        mbed_target = get_target_by_name(mbed_target, mbed_program.root_path)
+        header_file_contents = generate_config_header_file(mbed_target, mbed_program)
         write_file(pathlib.Path(program_path), "mbed_config.h", header_file_contents)
         click.echo(f"The mbed_config.h file has been generated and successfully written to '{program_path}'.")
