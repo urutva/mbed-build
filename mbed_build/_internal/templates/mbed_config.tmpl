@@ -25,3 +25,4 @@
 #define {{ macro.name | ljust(max_name_length + max_value_length + 1)}} // set by {{ macro.set_by }}
 {% endif %}
 {%- endfor %}
+#endif // __MBED_CONFIG_DATA__
