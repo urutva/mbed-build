@@ -1,0 +1,26 @@
+SET(CMAKE_SYSTEM_NAME Generic)
+SET(CMAKE_CROSSCOMPILING TRUE)
+
+# force compiler settings
+SET(CMAKE_C_COMPILER_WORKS TRUE)
+SET(CMAKE_CXX_COMPILER_WORKS TRUE)
+
+# force cmake compilers
+SET(CMAKE_ASM_COMPILER    "{{asm_compiler}}")
+SET(CMAKE_C_COMPILER      "{{c_compiler}}")
+SET(CMAKE_CXX_COMPILER    "{{cxx_compiler}}")
+SET(ELF2BIN               "{{elf_to_bin}}")
+{% if hex_files %}
+SET(SREC_CAT "srec_cat")
+{%- endif %}
+
+SET(LD_SYS_LIBS "{%- block link_libraries -%} -Wl,--start-group {{link_libraries|join(" ")}} {{libraries|join(" ")}} -Wl,--end-group {%- endblock -%}")
+
+SET(CMAKE_C_FLAGS "{{c|join(" ")}} -include mbed_config.h")
+SET(CMAKE_CXX_FLAGS "{{cxx|join(" ")}}  -include mbed_config.h")
+SET(CMAKE_ASM_FLAGS "{{asm|join(" ")}}  -include mbed_config.h")
+SET(CMAKE_CXX_LINK_FLAGS "{{cxx_link|join(" ")}} {% for p in library_paths %} {{user_library_flag}}${CMAKE_CURRENT_SOURCE_DIR}/{{p}} {% endfor %}")
+{% if cxx_preprocessor -%}
+SET(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} ${LD_SYS_LIBS} -T ${CMAKE_BINARY_DIR}/{{project_name}}_pp.link_script.ld")
+{%- endif %}
+
