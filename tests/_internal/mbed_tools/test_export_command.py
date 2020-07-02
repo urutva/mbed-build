@@ -11,11 +11,11 @@ from mbed_build._internal.mbed_tools.export import export
 
 
 class TestExport(TestCase):
-    @mock.patch("mbed_build._internal.mbed_tools.export.generate_cmakelists_file")
+    @mock.patch("mbed_build._internal.mbed_tools.export.generate_cmakelists_keys_file")
     @mock.patch("mbed_build._internal.mbed_tools.export.write_file")
-    def test_export(self, mock_write_file, mock_generate_cmakelists_file):
+    def test_export(self, mock_write_file, mock_generate_cmakelists_keys_file):
         mock_file_contents = "Hello world"
-        mock_generate_cmakelists_file.return_value = mock_file_contents
+        mock_generate_cmakelists_keys_file.return_value = mock_file_contents
         output_dir = "some-directory"
         program_path = "blinky"
         mbed_target = "K64F"
@@ -26,16 +26,16 @@ class TestExport(TestCase):
 
         self.assertEqual(result.exit_code, 0)
         self.assertIn(output_dir, result.output)
-        mock_generate_cmakelists_file.assert_called_once_with(mbed_target, program_path, toolchain)
+        mock_generate_cmakelists_keys_file.assert_called_once_with(mbed_target, program_path, toolchain)
         mock_write_file.assert_called_once_with(
-            pathlib.Path(output_dir), "CMakeLists.txt", mock_generate_cmakelists_file.return_value
+            pathlib.Path(output_dir), "CMakeLists.txt", mock_generate_cmakelists_keys_file.return_value
         )
 
-    @mock.patch("mbed_build._internal.mbed_tools.export.generate_cmakelists_file")
+    @mock.patch("mbed_build._internal.mbed_tools.export.generate_cmakelists_keys_file")
     @mock.patch("mbed_build._internal.mbed_tools.export.write_file")
-    def test_export_default_program_path(self, mock_write_file, mock_generate_cmakelists_file):
+    def test_export_default_program_path(self, mock_write_file, mock_generate_cmakelists_keys_file):
         mock_file_contents = "Hello world"
-        mock_generate_cmakelists_file.return_value = mock_file_contents
+        mock_generate_cmakelists_keys_file.return_value = mock_file_contents
         output_dir = "some-directory"
         mbed_target = "K64F"
         toolchain = "GCC"
@@ -45,7 +45,7 @@ class TestExport(TestCase):
 
         self.assertEqual(result.exit_code, 0)
         self.assertIn(output_dir, result.output)
-        mock_generate_cmakelists_file.assert_called_once_with(mbed_target, ".", toolchain)
+        mock_generate_cmakelists_keys_file.assert_called_once_with(mbed_target, ".", toolchain)
         mock_write_file.assert_called_once_with(
-            pathlib.Path(output_dir), "CMakeLists.txt", mock_generate_cmakelists_file.return_value
+            pathlib.Path(output_dir), "CMakeLists.txt", mock_generate_cmakelists_keys_file.return_value
         )
