@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Iterable
 
-from mbed_targets import get_target_by_board_type
+from mbed_targets import Target
 
 
 @dataclass
@@ -73,9 +73,8 @@ class Source:
         return cls(human_name=f"File: {file_name}", config=config, overrides=namespaced_overrides, macros=macros)
 
     @classmethod
-    def from_target(cls, mbed_target: str, mbed_program_directory: Path) -> "Source":
+    def from_target(cls, target: Target) -> "Source":
         """Build Source from retrieved mbed_targets.Target data."""
-        target = get_target_by_board_type(mbed_target, mbed_program_directory)
         namespace = "target"
         config = _namespace_data(target.config, namespace)
 
@@ -87,7 +86,7 @@ class Source:
         namespaced_overrides = _namespace_data(overrides, namespace)
 
         return cls(
-            human_name=f"mbed_target.Target for {mbed_target}",
+            human_name=f"mbed_target.Target for {target}",
             config=config,
             overrides=namespaced_overrides,
             macros=[],
