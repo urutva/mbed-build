@@ -1,0 +1,145 @@
+{
+    "GCC_ARM": {
+            "Cortex-M0": [
+                "-mthumb"
+            ],
+            "Cortex-M0+": [
+                "-mthumb",
+                "-mcpu=cortex-m0plus"
+            ],
+            "Cortex-M1": [
+                "-mthumb"
+            ],
+            "Cortex-M3": [
+                "-mthumb"
+            ],
+            "Cortex-M4": [
+                "-mthumb",
+                "-mcpu=cortex-m4"
+            ],
+            "Cortex-M4F": [
+                "-mthumb",
+                "-mcpu=cortex-m4",
+                "-mfpu=fpv4-sp-d16",
+                "-mfloat-abi=softfp"
+            ],
+            "Cortex-M7": [
+                "-mthumb",
+                "-mcpu=cortex-m7"
+            ],
+            "Cortex-M7F": [
+                "-mthumb",
+                "-mfpu=fpv5-sp-d16",
+                "-mfloat-abi=softfp",
+                "-mcpu=cortex-m7"
+            ],
+            "Cortex-M7FD": [
+                "-mthumb",
+                "-mfpu=fpv5-d16",
+                "-mfloat-abi=softfp",
+                "-mcpu=cortex-m7"
+            ],
+            "Cortex-A9": [
+                "-mthumb-interwork",
+                "-marm",
+                "-march=armv7-a",
+                "-mfpu=vfpv3",
+                "-mfloat-abi=hard",
+                "-mno-unaligned-access"
+            ],
+            "Cortex-M23": [
+                "-mthumb"
+            ],
+            "Cortex-M23-NS": [
+                "-mthumb"
+            ],
+            "Cortex-M33": [
+                "-mthumb",
+                "-march=armv8-m.main"
+            ],
+            "Cortex-M33-NS": [
+                "-mthumb",
+                "-march=armv8-m.main"
+            ],
+            "Cortex-M33F": [
+                "-mthumb",
+                "-mfpu=fpv5-sp-d16",
+                "-mfloat-abi=softfp",
+                "-march=armv8-m.main"
+            ],
+            "Cortex-M33F-NS": [
+                "-mthumb",
+                "-mfpu=fpv5-sp-d16",
+                "-mfloat-abi=softfp",
+                "-march=armv8-m.main"
+            ],
+            "Cortex-M33FE": [
+                "-mthumb",
+                "-mfpu=fpv5-sp-d16",
+                "-mfloat-abi=softfp",
+                "-march=armv8-m.main+dsp"
+            ],
+            "Cortex-M33FE-NS": [
+                "-mthumb",
+                "-mfpu=fpv5-sp-d16",
+                "-mfloat-abi=softfp",
+                "-march=armv8-m.main+dsp"
+            ]
+        },
+    "ARMC6": {
+            "Cortex-M0": [
+                "--cpu=Cortex-M0"
+                   ],
+            "Cortex-M0+": [
+                "--cpu=Cortex-M0plus"
+            ],
+            "Cortex-M1": [
+                "--cpu=Cortex-M1"
+            ],
+            "Cortex-M3": [
+                "--cpu=Cortex-M3"
+            ],
+            "Cortex-M4": [
+                "--cpu=Cortex-M4"
+            ],
+            "Cortex-M4F": [
+                "--cpu=Cortex-M4.fp.sp"
+            ],
+            "Cortex-M7": [
+                "--cpu=Cortex-M7"
+            ],
+            "Cortex-M7F": [
+                "--cpu=Cortex-M7.fp.sp"
+            ],
+            "Cortex-M7FD": [
+                "--cpu=Cortex-M7.fp.dp"
+            ],
+            "Cortex-A9": [
+                "--cpu=Cortex-A9"
+            ],
+            "Cortex-M23": [
+                "--cpu=Cortex-M23"
+            ],
+            "Cortex-M23-NS": [
+                "--cpu=Cortex-M23"
+            ],
+            "Cortex-M33": [
+                "--cpu=Cortex-M33"
+            ],
+            "Cortex-M33-NS": [
+                "--cpu=Cortex-M33"
+            ],
+            "Cortex-M33F": [
+                "--cpu=Cortex-M33F"
+            ],
+            "Cortex-M33F-NS": [
+                "--cpu=Cortex-M33F"
+            ],
+            "Cortex-M33FE": [
+                "--cpu=Cortex-M33FE"
+            ],
+            "Cortex-M33FE-NS": [
+                "--cpu=Cortex-M33FE"
+            ]
+        }
+}
