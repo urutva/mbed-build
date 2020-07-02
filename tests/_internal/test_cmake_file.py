@@ -4,7 +4,7 @@
 #
 from unittest import TestCase, mock
 
-from mbed_build._internal.cmake_file import generate_cmakelists_file, _render_cmakelists_template
+from mbed_build._internal.cmake_file import generate_cmakelists_keys_file, _render_cmakelists_keys_only_template
 
 
 class TestGenerateCMakeListsFile(TestCase):
@@ -19,12 +19,12 @@ class TestGenerateCMakeListsFile(TestCase):
         program_path = "blinky"
         toolchain_name = "GCC"
 
-        result = generate_cmakelists_file(mbed_target, program_path, toolchain_name)
+        result = generate_cmakelists_keys_file(mbed_target, program_path, toolchain_name)
 
         get_target_by_name.assert_called_once_with(mbed_target, program_path)
         self.assertEqual(
             result,
-            _render_cmakelists_template(
+            _render_cmakelists_keys_only_template(
                 get_target_by_name.return_value.labels,
                 get_target_by_name.return_value.features,
                 get_target_by_name.return_value.components,
@@ -39,7 +39,7 @@ class TestRendersCMakeListsFile(TestCase):
         feature_labels = ["foo", "bar"]
         component_labels = ["foo", "bar"]
         toolchain_name = "baz"
-        result = _render_cmakelists_template(target_labels, feature_labels, component_labels, toolchain_name)
+        result = _render_cmakelists_keys_only_template(target_labels, feature_labels, component_labels, toolchain_name)
 
         for label in target_labels + feature_labels + component_labels + [toolchain_name]:
             self.assertIn(label, result)
