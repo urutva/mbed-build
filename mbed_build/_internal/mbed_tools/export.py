@@ -7,8 +7,9 @@ import pathlib
 
 import click
 
-from mbed_build._internal.cmake_file import generate_cmakelists_file
+from mbed_build._internal.cmake_file import generate_cmakelists_keys_file, generate_cmakelists_full_file, generate_cmake_toolchain_file
 from mbed_build._internal.write_files import write_file
+from mbed_build._internal.context import create_build_context
 
 
 @click.command(
@@ -52,6 +53,10 @@ def export(output_directory: str, toolchain: str, mbed_target: str, program_path
     Raises:
         InvalidExportOutputDirectory: it's not possible to export to the output directory provided
     """
-    cmake_file_contents = generate_cmakelists_file(mbed_target, program_path, toolchain)
-    write_file(pathlib.Path(output_directory), "CMakeLists.txt", cmake_file_contents)
+    context = create_build_context(toolchain, pathlib.Path(program_path), mbed_target)
+    cmake_file_contents = generate_cmakelists_full_file(context)
+    cmake_toolchain_file_contents = generate_cmake_toolchain_file(context)
+    output_dir = pathlib.Path(output_directory)
+    write_file(output_dir, "CMakeLists.txt", cmake_file_contents)
+    write_file(output_dir, f"{mbed_target}_{toolchain}.cmake", cmake_toolchain_file_contents)
     click.echo(f"The program-level CMake file has been successfully exported to directory '{str(output_directory)}'")
